@@ -2,7 +2,7 @@
 set -e
 
 if [ -z "$1" ]; then
-    echo "Se debe proporcionar un argumento"
+    echo "Se debe proporcionar una ruta argumento"
     exit 1
 fi
 
