@@ -7,7 +7,6 @@ if [ -z "$1" ]; then
 fi
 
 RUTA=${1}
-ERROR=0
 
 if [ -f ${RUTA} ]; then
     if [ -h ${RUTA} ]; then
@@ -27,9 +26,7 @@ elif [ -c ${RUTA} ]; then
     echo "Es un dispositivo de caracteres"
 else
     echo "El fichero o directorio no existe"
-    ERROR=1
+    exit 1
 fi
 
-if [ ${ERROR} -ne 1 ]; then
-    ls -l ${RUTA}
-fi
+ls -l ${RUTA}
