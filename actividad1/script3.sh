@@ -23,6 +23,6 @@ echo $TEXT
 
 if [ $NUM_ARGS -gt 2 ]; then
     for arg in "$@"; do
-        echo "$arg"
+        echo $arg
     done
 fi
