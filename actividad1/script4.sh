@@ -14,6 +14,11 @@ if [ ! -e $ORIGEN ]; then
     exit 1
 fi
 
+if [ ! -e $DESTINO ]; then
+    echo "El fichero destino $DESTINO no existe"
+    exit 1
+fi
+
 cp $ORIGEN $DESTINO
 
 echo "Copiado $ORIGEN a $DESTINO"
