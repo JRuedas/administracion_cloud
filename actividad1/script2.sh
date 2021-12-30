@@ -1,9 +1,21 @@
 #!/bin/bash
 set -e
 
+uso() {
+    cat <<EOM
+    Uso: $(basename $0) <ruta de fichero>
+EOM
+}
+
 if [ -z "$1" ]; then
-    echo "Se debe proporcionar como argumento la ruta hacia un fichero"
+    echo "Error. Se debe proporcionar como argumento la ruta hacia un fichero"
+    uso
     exit 1
+fi
+
+if [ $1 == "-h" ]; then
+    uso
+    exit 0
 fi
 
 TARGET_DIR="$HOME/fotos"
