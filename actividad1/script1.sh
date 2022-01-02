@@ -5,17 +5,21 @@ uso() {
     cat <<EOM
     Uso: $(basename $0) <ruta de fichero o directorio>
 EOM
+    exit $1
 }
 
-if [ -z "$1" ]; then
-    echo "Error. Se debe proporcionar una argumento"
-    uso
-    exit 1
+if [ $# -ne 1 ]; then
+    echo "Error. Numero de argumentos incorrecto"
+    uso 1
 fi
 
-if [ $1 == "-h" ]; then
-    uso
-    exit 0
+if [ -z "$1" ]; then
+    echo "Error. No se admiten argumentos vacios"
+    uso 1
+fi
+
+if [[ $1 == "-h" || $1 == "--help" ]]; then
+    uso 0
 fi
 
 RUTA=$1
@@ -37,8 +41,8 @@ elif [ -b $RUTA ]; then
 elif [ -c $RUTA ]; then
     echo "Es un dispositivo de caracteres"
 else
-    echo "El fichero o directorio no existe"
-    exit 1
+    echo "Error. El fichero o directorio especificado no existe"
+    uso 1
 fi
 
 ls -l $RUTA
