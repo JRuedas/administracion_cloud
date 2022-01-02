@@ -3,8 +3,8 @@ set -e
 
 NUM_ARGS=$#
 
-echo "Nombre del script: $0"
-echo "Numero de argumentos del script: $NUM_ARGS"
+echo "$0"
+echo "$NUM_ARGS"
 
 TEXT=""
 
