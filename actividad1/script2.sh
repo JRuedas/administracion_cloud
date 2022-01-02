@@ -13,17 +13,12 @@ if [ $# -ne 1 ]; then
     uso 1
 fi
 
-if [ -z "$1" ]; then
-    echo "Error. No se admiten argumentos vacios"
-    uso 1
-fi
-
 if [[ $1 == "-h" || $1 == "--help" ]]; then
     uso 0
 fi
 
-if [ ! -f $1 ]; then
-    if [ -d $1 ]; then
+if [ ! -f "$1" ]; then
+    if [ -d "$1" ]; then
         echo "Error. Se ha proporcionado un directorio"
     else
         echo "Error. El fichero especificado no existe"

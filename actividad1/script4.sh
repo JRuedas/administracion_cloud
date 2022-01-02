@@ -13,21 +13,16 @@ if [ $# -ne 2 ]; then
     uso 1
 fi
 
-if [[ -z "$1" || -z "$2" ]]; then
-    echo "Error. No se admiten argumentos vacios"
-    uso 1
-fi
-
 ORIGEN=$1
 DESTINO=$2
 
-if [ ! -e $ORIGEN ]; then
-    echo "Error. El fichero origen $ORIGEN no existe"
+if [ ! -e "$ORIGEN" ]; then
+    echo "Error. El fichero origen no existe"
     uso 1
 fi
 
-if [ ! -e $DESTINO ]; then
-    echo "Error. El fichero destino $DESTINO no existe"
+if [ ! -e "$DESTINO" ]; then
+    echo "Error. El fichero destino no existe"
     uso 1
 fi
 
