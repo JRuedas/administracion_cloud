@@ -30,7 +30,7 @@ TARGET_DIR="$HOME/fotos"
 FILE=$1
 FILE_NAME="${FILE##*/}"
 
-if [[ "$(file --extension $FILE)" == *"jpeg"* ]]; then
+if [[ "$(file -b --extension $FILE)" == *"jpeg"* ]]; then
     echo "Copiando el fichero al directorio $TARGET_DIR"
     mkdir -p $TARGET_DIR
     cp $FILE "$TARGET_DIR/$FILE_NAME"
