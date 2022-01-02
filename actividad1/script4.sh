@@ -1,22 +1,34 @@
 #!/bin/bash
 set -e
 
+uso() {
+    cat <<EOM
+    Uso: $(basename $0) <fichero origen> <fichero destino>
+EOM
+    exit $1
+}
+
 if [ $# -ne 2 ]; then
-    echo "Debe recibir unicamente 2 parametros. Fichero Origen y Fichero Destino."
-    exit 1
+    echo "Error. Debe recibir unicamente 2 parametros."
+    uso 1
 fi
 
-ORIGEN=${1}
-DESTINO=${2}
+if [[ -z "$1" || -z "$2" ]]; then
+    echo "Error. No se admiten argumentos vacios"
+    uso 1
+fi
+
+ORIGEN=$1
+DESTINO=$2
 
 if [ ! -e $ORIGEN ]; then
-    echo "El fichero origen $ORIGEN no existe"
-    exit 1
+    echo "Error. El fichero origen $ORIGEN no existe"
+    uso 1
 fi
 
 if [ ! -e $DESTINO ]; then
-    echo "El fichero destino $DESTINO no existe"
-    exit 1
+    echo "Error. El fichero destino $DESTINO no existe"
+    uso 1
 fi
 
 cp $ORIGEN $DESTINO
