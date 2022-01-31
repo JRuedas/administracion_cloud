@@ -74,74 +74,89 @@ then
 fi
 
 # # Preparar el repositorio (apt-get) de mongodb añadir su clave apt
-# apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 4B7C549A058F8B6B
-# echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.2 multiverse" | tee /etc/apt/sources.list.d/mongodb.list
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 4B7C549A058F8B6B
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.2 multiverse" | tee /etc/apt/sources.list.d/mongodb.list
 
-# if [[ -z "$(mongo --version 2> /dev/null | grep '4.2.1')" ]]
-# then
-#     # Instalar paquetes comunes, servidor, shell, balanceador de shards y herramientas
-#     apt-get -y update \
-#     && apt-get install -y \
-#         mongodb-org=4.2.1 \
-#         mongodb-org-server=4.2.1 \
-#         mongodb-org-shell=4.2.1 \
-#         mongodb-org-mongos=4.2.1 \
-#         mongodb-org-tools=4.2.1 \
-#     && rm -rf /var/lib/apt/lists/* \
-#     && pkill -u mongodb || true \
-#     && pkill -f mongod || true \
-#     && rm -rf /var/lib/mongodb
-# fi
+if [[ -z "$(mongo --version 2> /dev/null | grep '4.2.1')" ]]
+then
+    # Instalar paquetes comunes, servidor, shell, balanceador de shards y herramientas
+    apt-get -y update \
+    && apt-get install -y \
+        mongodb-org=4.2.1 \
+        mongodb-org-server=4.2.1 \
+        mongodb-org-shell=4.2.1 \
+        mongodb-org-mongos=4.2.1 \
+        mongodb-org-tools=4.2.1 \
+    && rm -rf /var/lib/apt/lists/* \
+    && pkill -u mongodb || true \
+    && pkill -f mongod || true \
+    && rm -rf /var/lib/mongodb
+fi
 
 # # Crear las carpetas de logs y datos con sus permisos
-# [[ -d "/datos/bd" ]] || mkdir -p -m 755 "/datos/bd"
-# [[ -d "/datos/log" ]] || mkdir -p -m 755 "/datos/log"
+[[ -d "/datos/bd" ]] || mkdir -p -m 755 "/datos/bd"
+[[ -d "/datos/log" ]] || mkdir -p -m 755 "/datos/log"
 
 # # Establecer el dueño y el grupo de las carpetas db y log
-# chown mongodb /datos/log /datos/bd
-# chgrp mongodb /datos/log /datos/bd
+chown mongodb /datos/log /datos/bd
+chgrp mongodb /datos/log /datos/bd
 
 # # Crear el archivo de configuración de mongodb con el puerto solicitado
-# mv /etc/mongod.conf /etc/mongod.conf.orig
-# (
-# cat <<MONGOD_CONF
-# # /etc/mongod.conf
-# systemLog:
-#     destination: file
-#     path: /datos/log/mongod.log
-#     logAppend: true
-# storage:
-#     dbPath: /datos/bd
-#     engine: wiredTiger
-#     journal:
-#         enabled: true
-# net:
-#     port: ${PUERTO_MONGOD}
-# security:
-#     authorization: enabled
-# MONGOD_CONF
-# ) > /etc/mongod.conf
+mv /etc/mongod.conf /etc/mongod.conf.orig
+(
+cat <<MONGOD_CONF
+# /etc/mongod.conf
+systemLog:
+    destination: file
+    path: /datos/log/mongod.log
+    logAppend: true
+storage:
+    dbPath: /datos/bd
+    engine: wiredTiger
+    journal:
+        enabled: true
+net:
+    port: ${PUERTO_MONGOD}
+security:
+    authorization: enabled
+MONGOD_CONF
+) > /etc/mongod.conf
 
 # # Reiniciar el servicio de mongod para aplicar la nueva configuracion
-# systemctl restart mongod
+systemctl restart mongod
 
 # logger "Esperando a que mongod responda..."
-# sleep 15
+MONGO_LOG="/datos/log/mongod.log"
+
+while [[ ! -f $MONGO_LOG ]] ; do
+    sleep 1
+done
+
+LOG_MESSAGE="waiting for connections on port"
+
+COUNTER=0
+grep -q $LOG_MESSAGE $MONGO_LOG
+while [[ $? -ne 0 && $COUNTER -lt 15 ]] ; do
+    sleep 2
+    let COUNTER+=2
+    echo "Esperando que mongo se incialice. $COUNTER segundos esperados"
+    grep -q $LOG_MESSAGE $MONGO_LOG
+done
 
 # # Crear usuario con la password proporcionada como parametro
-# mongo admin << CREACION_DE_USUARIO
-# db.createUser({
-#     user: "${USUARIO}",
-#     pwd: "${PASSWORD}",
-#     roles:[{
-#         role: "root",
-#         db: "admin"
-#     },{
-#         role: "restore",
-#         db: "admin"
-# }] })
-# CREACION_DE_USUARIO
+mongo admin << CREACION_DE_USUARIO
+db.createUser({
+    user: "${USUARIO}",
+    pwd: "${PASSWORD}",
+    roles:[{
+        role: "root",
+        db: "admin"
+    },{
+        role: "restore",
+        db: "admin"
+}] })
+CREACION_DE_USUARIO
 
-# logger "El usuario ${USUARIO} ha sido creado con exito!"
+logger "El usuario ${USUARIO} ha sido creado con exito!"
 
-# exit 0
+exit 0
