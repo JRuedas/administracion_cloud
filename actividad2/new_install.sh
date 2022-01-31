@@ -24,6 +24,12 @@ function ayuda() {
     fi
 }
 
+if [ $# -eq 0 ];
+then
+    ayuda
+    exit 0
+fi
+
 # Gestionar los argumentos
 while getopts ":f:a" OPCION
 do
@@ -126,20 +132,11 @@ MONGOD_CONF
 systemctl restart mongod
 
 # logger "Esperando a que mongod responda..."
-MONGO_LOG="/datos/log/mongod.log"
-LOG_MESSAGE="waiting for connections on port"
-
-while [[ ! -f $MONGO_LOG ]] ; do
-    sleep 1
-done
-
 COUNTER=0
-grep -q $LOG_MESSAGE $MONGO_LOG
-while [[ $? -ne 0 && $COUNTER -lt 15 ]] ; do
+while !(nc -z localhost ${PUERTO_MONGOD}) && [[ $COUNTER -lt 10 ]] ; do
     sleep 2
     let COUNTER+=2
     echo "Esperando que mongo se incialice. $COUNTER segundos esperados"
-    grep -q $LOG_MESSAGE $MONGO_LOG
 done
 
 # # Crear usuario con la password proporcionada como parametro
