@@ -72,4 +72,6 @@ Vagrant.configure("2") do |config|
   # SHELL
 
   config.vm.provision "file", source: "install.sh", destination: "~/install.sh"
+  config.vm.provision "file", source: "new_install.sh", destination: "~/new_install.sh"
+  config.vm.provision "file", source: "config.ini", destination: "~/config.ini"
 end
