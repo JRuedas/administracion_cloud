@@ -127,12 +127,11 @@ systemctl restart mongod
 
 # logger "Esperando a que mongod responda..."
 MONGO_LOG="/datos/log/mongod.log"
+LOG_MESSAGE="waiting for connections on port"
 
 while [[ ! -f $MONGO_LOG ]] ; do
     sleep 1
 done
-
-LOG_MESSAGE="waiting for connections on port"
 
 COUNTER=0
 grep -q $LOG_MESSAGE $MONGO_LOG
