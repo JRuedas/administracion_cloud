@@ -79,7 +79,7 @@ then
     PUERTO_MONGOD=27017
 fi
 
-# # Preparar el repositorio (apt-get) de mongodb añadir su clave apt
+# Preparar el repositorio (apt-get) de mongodb añadir su clave apt
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 4B7C549A058F8B6B
 echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.2 multiverse" | tee /etc/apt/sources.list.d/mongodb.list
 
@@ -99,15 +99,15 @@ then
     && rm -rf /var/lib/mongodb
 fi
 
-# # Crear las carpetas de logs y datos con sus permisos
+# Crear las carpetas de logs y datos con sus permisos
 [[ -d "/datos/bd" ]] || mkdir -p -m 755 "/datos/bd"
 [[ -d "/datos/log" ]] || mkdir -p -m 755 "/datos/log"
 
-# # Establecer el dueño y el grupo de las carpetas db y log
+# Establecer el dueño y el grupo de las carpetas db y log
 chown mongodb /datos/log /datos/bd
 chgrp mongodb /datos/log /datos/bd
 
-# # Crear el archivo de configuración de mongodb con el puerto solicitado
+# Crear el archivo de configuración de mongodb con el puerto solicitado
 mv /etc/mongod.conf /etc/mongod.conf.orig
 (
 cat <<MONGOD_CONF
@@ -128,10 +128,10 @@ security:
 MONGOD_CONF
 ) > /etc/mongod.conf
 
-# # Reiniciar el servicio de mongod para aplicar la nueva configuracion
+# Reiniciar el servicio de mongod para aplicar la nueva configuracion
 systemctl restart mongod
 
-# logger "Esperando a que mongod responda..."
+logger "Esperando a que mongod responda..."
 COUNTER=0
 while !(nc -z localhost ${PUERTO_MONGOD}) && [[ $COUNTER -lt 10 ]] ; do
     sleep 2
@@ -139,7 +139,7 @@ while !(nc -z localhost ${PUERTO_MONGOD}) && [[ $COUNTER -lt 10 ]] ; do
     echo "Esperando que mongo se incialice. $COUNTER segundos esperados"
 done
 
-# # Crear usuario con la password proporcionada como parametro
+# Crear usuario con la password proporcionada como parametro
 mongo admin << CREACION_DE_USUARIO
 db.createUser({
     user: "${USUARIO}",
