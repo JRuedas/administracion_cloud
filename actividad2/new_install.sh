@@ -37,14 +37,14 @@ do
     f ) CONFIG=$OPTARG
         echo "Parametro CONFIG establecido con '${CONFIG}'";;
     a ) ayuda; exit 0;;
-    : ) ayuda "Falta el parametro para -$OPTARG"; exit 1;; 
-    \?) ayuda "La opcion no existe : $OPTARG"; exit 1;;
+    : ) ayuda "Falta el parametro para -$OPTARG"; exit 1;; \?) ayuda "La opcion no existe : $OPTARG"; exit 1;;
     esac
 done
 
-if [ ! -f ${CONFIG} ]
+if [ ! -f "${CONFIG}" ]
 then
-    ayuda "El fichero (-f) especificado no existe"; exit 1
+    ayuda "El fichero (-f) especificado no existe"
+    exit 1
 fi
 
 while IFS= read -r line
